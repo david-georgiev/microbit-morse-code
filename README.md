@@ -40,7 +40,7 @@ The message is stored in a 9 bit data packet where the first **3 bits represent 
 <table>
     <thead>
         <tr align="center">
-            <th colspan=10><b>Data Packet</b></th>
+            <th colspan=10><b>Data Packet example</b></th>
         </tr>
     </thead>
     <tbody>
@@ -97,20 +97,23 @@ After gathering and decoding the header information from the packet, the message
 ### Modes:
 To change mode (from sender to receiver), the sender must simply press the button B when the buffer is empty. This will send an empty message to the receiver that will know to set it's state to sender.
 
-**Final state machine showing the workings of the sender:**
+## **Final state machine showing the workings of the sender:**
 ![SenderFSM](Images/Sender_FSM.jpg "Morse code binary tree")
 
-**Final state machine showing the workings of the receiver:**
+## **Final state machine showing the workings of the receiver:**
 ![ReceiverFSM](Images/Reciever_FSM.jpg "Morse code binary tree")
 ---
 
 NOTE:
+
 1 Since a debugging tool wasn’t used to test the program many of the print statement used for testing are commented but still available in the code. Other comments are left for demonstration purposes.
 
 2 The granularity of the sleep function is 6 ms so the actual time of the sleep functions should be calculated when the number is divided by 6. E.g (`sleep(120)` is actually  a  20 ms sleep)
 
 3 Encryption occurs only on the last 5 bits of the data packet, which, represent the actual message. The message header is left 
 deciphered. 
+
+4 For better memory management the `main.cpp` file could be divided into seperate files namely sender and receiver.
 ___
 Credits:
 
