@@ -27,10 +27,41 @@ TREE IMAGE
 
 ### Data packet
 The message is stored in a 9 bit data packet where the first 3 bits represent the length of the message, followed by the parity bit and the last 5 bits that represent the actual message(array).
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| 0    | Are  | Cool |
-|:----:|:----:|:----:|
+
+<table>
+    <thead>
+        <tr align="center">
+            <th colspan=10><b>Data Packet</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Binary representation:</b></td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        <tr align="center">
+            <td align="left"><b>Meaning:</b></td>
+            <td colspan=3>Message Length bits</td>
+            <td colspan=1>Check</td>
+            <td colspan=4>Message bits</td>
+            <td rowspan=2>Excess bit</td>
+        </tr>
+        <tr align="center">
+            <td align="left"><b>Decoded value:</b></td>
+            <td colspan=3>4</td>
+            <td colspan=1>even</td>
+            <td colspan=4>P</td>
+        </tr>
+    </tbody>
+</table>
 
 We choose this approach knowing that our tree has 5 layers so anything more than 5 inputs would 
 be an error. To represent an-layer tree where n < 9 we can simply grow the message array and adjust the error messages but anything more than that will require another bit added to the length since the maximum number represented by 3 bits is 8.
