@@ -21,8 +21,8 @@ The sender will write one character in morse code at the time, and then press a 
     * The executable can be found inside `/build/bbc-microbit-classic-gcc/source`, with the executable being named `project_name-combined.hex`
     * Copy this file to `/media/student/MICROBIT`
 ---
-### Instructions
-To connect the 2 Microbits we need 2 alligator clips. For the data transmission we use digital signal, which means that both Microbits need to share the same GROUND and PIN in order to establish communication. In our code we use Pin number 0 but any Pin is fine to use as soon as we change the Pin number in the code to the pin number of your choice. To start we need to compile the code for the receiver with the Boolean named receiver as false and then do the same for the second Microbit this time changing the value to true.
+### Hardware instructions
+To connect the 2 Microbits we need 2 alligator clips. For the data transmission the Micro:Bits use digital signal, which means that both Microbits need to share the same GROUND and PIN in order to establish communication. In the code Pin number 0 is utilized, but any Pin is fine to use given that we change the Pin number in the program to the pin number of your choice. To start the program needs to be compiled for the receiver with the Boolean variable named "receiver" set to true and then, for the sender, the value of the variable "receiver" to false.
 ```c++
 //Sender if false/ receiver if true
 bool receiver = false;
@@ -30,11 +30,12 @@ bool receiver = false;
 ---
 
 ### Transmission
- First The Microbit detects if a long or short click occures, to chose between the dot and dash symbol. The dot symbol will indicate to the receiver to traverset the left edge of a node in the tree, oppositaly, if the dash symbol is chosen, the receiver will know to traverse the tree to the right. 
- For convenience button B is used to trigger the transmission of the Morse code that has been recorded up to that point. When an event on button B occurs the message stored on the buffer is encrypted, after which, the parity bit is added to the data packet, and finally the message is sent to the receiver where the message will be decoded and decrypted.
+ First The Microbit detects if a long or short click occurs, to choose between a dot or dash symbol. The dot symbol will indicate to the receiver to travers the left edge of a node in the tree, oppositaly, if the dash symbol is detected, the receiver will know to traverse the right edge of a node in the tree. 
+
+ For convenience button B is used to trigger the transmission of the Morse code that has been recorded in a buffer up to that point. When an event on button B occurs the message stored on the buffer is encrypted, after which, a parity bit is added to the data packet, and finally the message is sent to the receiver where the message will be decrypted and decoded.
 
 ### Data packet
-The message is stored in a 9 bit data packet where the first **3 bits represent the length of the message**, followed by a parity bit that will be used to check the integrity of the message upon arrival and **the last 5 bits represent the actual message**.
+The message is stored in a 9 bit data packet where the first **3 bits represent the length of the message**, followed by **a parity bit** that will be used to check the integrity of the message upon arrival and **the last 5 bits represent the actual message**.
 
 <table>
     <thead>
@@ -43,7 +44,7 @@ The message is stored in a 9 bit data packet where the first **3 bits represent 
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr align="center">
             <td><b>Binary representation:</b></td>
             <td>1</td>
             <td>0</td>
@@ -77,24 +78,24 @@ The message is stored in a 9 bit data packet where the first **3 bits represent 
 </table>
 
 We chose this approach knowing that our tree has 5 layers so anything more than 5 inputs would 
-be an error. To represent an-layer tree where n < 9 we can simply grow the message array and adjust the error messages but anything more than that will require another bit added to the length since the maximum number represented by 3 bits is 8.
+be an error.
 
 ---
-#### Usage:
+#### Program flow:
 #####  Write a Dot
 When button A is pressed for short duration(approx. anything less than 1 sec) and released it triggers an event whose pulse is calculated by the Difference of the total sleep minus the sleep time for the dot. 
 #####  Write a Dash
 When button A is pressed for long duration(approx. anything more than 1 sec) and released it triggers an event whose pulse is  calculated by the Difference of the total sleep minus the sleep time for the dash.
 ##### Encryption
-The encryption is performed using XOR. The message section of the packet, before 		being sent, is encrypted by executing a bitwise XOR operation between the 			message and the key. The packet header is left decrypted for the receiver to 	“understand” it.	
+The encryption is performed using **XOR**. The message section of the packet, before 		being sent, is encrypted by executing a **bitwise XOR** operation **between the message** section of the packet **and a key**. The packet header is left decrypted for the receiver to “understand” it.	
 ##### Parity Checksum
-A checksum is accomplished using a ParityBit. Before being sent, the number of 1s 		in the packet is counted, and the parity bit will be set accordingly to have the total 	number of 1s even.
-Upon the packets arrival, the total number of ones will be checked again, and an 		error during transmission will be revealed if the resulting count is odd. 
-This method is effective for checking small packets of data where multiple errors 		during a single transmission are unlikely to happen. However this method will not 		be able to fully guarantee the integrity of the data.	
+A checksum is accomplished using a ParityBit. Before being sent, the number of 1s in the packet is counted, and the parity bit will be set accordingly to have the total number of 1s even.
+Upon the packets arrival, the total number of ones will be checked again, and an error during transmission will be revealed if the resulting count is odd. 
+This method is effective for checking small packets of data where multiple errors during a single transmission are unlikely to happen. However this method will not be able to fully guarantee the integrity of the data.	
 ##### Decryption
 After gathering and decoding the header information from the packet, the message 	section is decrypted.To do this a bitwise XOR is performed between the encrypted 		message and the key, revealing the information of the message.
-### Modes
-To change mode the sender must simply press the button B when the buffer is empty. This will send an empty message to the receiver that will know to switch mode to sender.
+### Modes:
+To change mode (from sender to receiver), the sender must simply press the button B when the buffer is empty. This will send an empty message to the receiver that will know to set it's state to sender.
 
 **Final state machine showing the workings of the sender:**
 ![SenderFSM](Images/Sender_FSM.jpg "Morse code binary tree")
@@ -104,14 +105,15 @@ To change mode the sender must simply press the button B when the buffer is empt
 ---
 
 NOTE:
-1 Since a debugging tool wasn’t use for that code many of the print statement used for testing are commented but still inside the code and others are left for demonstration purposes.
+1 Since a debugging tool wasn’t used to test the program many of the print statement used for testing are commented but still available in the code. Other comments are left for demonstration purposes.
 
-2 The granularity of the sleep function is 6 ms so the actual time of the sleep functions should be calculated when the number is divided by 6. E.g (sleep(120) is actually  a  20 ms sleep)
+2 The granularity of the sleep function is 6 ms so the actual time of the sleep functions should be calculated when the number is divided by 6. E.g (`sleep(120)` is actually  a  20 ms sleep)
 
-3 Encryption occurs only on the last 5 bits of the message which holds the actual message 
+3 Encryption occurs only on the last 5 bits of the data packet, which, represent the actual message. The message header is left 
+deciphered. 
 ___
 Credits:
 
-**Deyvid Gueorguiev**
+__**Deyvid Gueorguiev**__
 
-**Giacomo Pellizzari**
+__**Giacomo Pellizzari**__
